@@ -1,22 +1,24 @@
 let assets = require("assets");
 const { exportColor } = require("./generateColor");
+const { sz, fixName } = require("./util");
 
 function generateStyleClass() {
     const styles = assets.characterStyles.get();
     let resStyles = "";
     styles.forEach((style, index) => {
-        let name = style.name != null ? style.name : `style${index + 1}`;
+        let name = fixName(style.name != null ? style.name : `style${index + 1}`);
         name = name[0].toLowerCase() + name.substring(1, name.length);
         const tempStyle = _exportStyle(style.style);
         resStyles += `\n  static TextStyle get ${name} => ${tempStyle};`
     });
+    if (resStyles == "") return "";
     return `class AppTextStyles {${resStyles}\n}`;
 }
 
 function _exportStyle(style) {
     return `TextStyle(
         ${exportColor(style.fill, 1, true)}
-        fontSize: ${style.fontSize},
+        fontSize: ${sz(style.fontSize)},
         ${_fontWeight(style)}
         fontFamily: "${style.fontFamily}",
         ${_decoration(style)}

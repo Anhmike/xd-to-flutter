@@ -23,7 +23,9 @@ function create() {
         } else if (document.querySelector("#widget").checked) {
             const withSimpleCode = document.querySelector("#simpleCodeCheckbox").checked;
             const withDivision = document.querySelector("#division").checked;
-            onTapGenerateWidget(withSimpleCode, withDivision);
+            exports.withDivision = withDivision;
+            exports.withSimpleCode = withSimpleCode;
+            onTapGenerateWidget();
         }
     });
     return panel;
