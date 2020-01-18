@@ -1,10 +1,12 @@
 const { insertOnTree } = require("./insertOnTree");
+const { Widget } = require("./models/widget");
 
-function xdToFlutter(selection) {
+
+function generateSelection(selection) {
     const isSymbolInstance = selection.constructor.name == "SymbolInstance";
     const items = isSymbolInstance ? selection.children : selection.items;
     let array = _xdToArray(items);
-    let tree = new Tree();
+    let tree = new Widget();
     insertOnTree(array, tree);
     return "teste";
 }
@@ -41,14 +43,4 @@ function _xdToArray(item) {
     return list;
 }
 
-module.exports = { xdToFlutter };
-
-class Tree { }
-
-class Widget {
-    constructor(type, bounds, id) {
-        this.type = type;
-        this.bounds = bounds;
-        this.id = id
-    };
-}
+module.exports = { generateSelection };

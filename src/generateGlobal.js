@@ -1,34 +1,26 @@
 const { generateColorClass } = require("./generateColor");
 const { generateStyleClass } = require("./generateStyle");
-const { showMessageWithColor } = require("./showMessageWithColor");
-const { xdToFlutter } = require("./xdToFlutter");
+const { generateSelection } = require("./generateWidget/generateSelection");
 const { statelessWidget, fixName } = require("./util");
-let clipboard = require("clipboard");
+const { showMessageWithColor } = require("./showMessageWithColor");
 let scenegraph = require("scenegraph");
+let clipboard = require("clipboard");
 
-function onTapGenerateWidget() {
-    const selection = scenegraph.selection;
+function onTapGenerateGlobal(type) {
     let result;
-    if (selection.items.length != 0) {
-        result = _generateSelection(selection);
+    if (type == 'colors') {
+        result = generateColorClass();
+    } else if (type == 'textStyles') {
+        result = generateStyleClass();
     } else {
-        result = _generateAll();
+        result = generateComponents();
     }
     clipboard.copyText(result);
+    showMessageWithColor("Copied to clipboard", "green", "messageGlobal");
+
 }
 
-function _generateSelection(selection) {
-    return xdToFlutter(selection);
-}
-
-function _generateAll() {
-    const widgets = _generateComponents();
-    const styles = generateStyleClass();
-    const colors = generateColorClass();
-    return `${styles}\n${colors}\n${widgets}`;
-}
-
-function _generateComponents() {
+function generateComponents() {
     const components = [];
     const usedComponentsId = [];
     const artboards = scenegraph.selection.editContext.children;
@@ -47,9 +39,9 @@ function _generateComponent(artboard, components, usedComponentsId) {
         const isNotIncluded = !usedComponentsId.includes(item.symbolId);
         const isMaster = item.isMaster;
         const isComponentMaster = isSymbolInstance && isNotIncluded && isMaster;
-        if (isComponentMaster) {            
+        if (isComponentMaster) {
             usedComponentsId.push(item.symbolId);
-            const componentWidget = xdToFlutter(item);
+            const componentWidget = generateSelection(item);
             components.push(statelessWidget(fixName(item.name), componentWidget));
         } else if (item.constructor.name == "Group") {
             _generateComponent(item, components, usedComponentsId);
@@ -57,4 +49,4 @@ function _generateComponent(artboard, components, usedComponentsId) {
     });
 }
 
-module.exports = { onTapGenerateWidget };
+module.exports = { onTapGenerateGlobal };

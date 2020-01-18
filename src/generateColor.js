@@ -3,19 +3,17 @@ const { showMessageWithColor } = require("./showMessageWithColor");
 const { fixDouble, fixName } = require("./util");
 let assets = require("assets");
 
-function onTapGenerateColor(selection) {
+function onTapGenerateColor(selection, type) {
     if (selection.focusedArtboard == null) {
-        showMessageWithColor("Select something", "grey");
+        showMessageWithColor("Select something", "grey", "messageColor");
     } else if (selection.items[0].fill == null) {
-        showMessageWithColor("Select only one Widget", "red");
-    } else if (selection.items[0].fill.startX != null) {
-        showMessageWithColor("Gradient not implemented", "red");
+        showMessageWithColor("Select only one Widget", "red", "messageColor");
     } else {
         const item = selection.items[0];
-        const fill = item.fill;
+        const fill = type == "fill" ? item.fill : type == "border" ? item.stroke : item.shadow.color;
         const color = exportColor(fill, item.opacity);
         clipboard.copyText(color);
-        showMessageWithColor("Copied to clipboard", "green");
+        showMessageWithColor("Copied to clipboard", "green", "messageColor");
     }
 }
 
@@ -27,18 +25,18 @@ function generateColorClass() {
         name = fixName(name[0].toLowerCase() + name.substring(1, name.length));
         const isGradient = color.gradientType != null;
         let tempColor;
-        if (isGradient) {
-            tempColor = exportGradient(color, 1)
-        } else {
-            tempColor = exportColor(color.color, 1);
-        }
+        tempColor = exportColor(isGradient ? color : color.color, 1, false, true);
         resColors += `\n  static ${isGradient ? 'Gradient' : 'Color'} get ${name} => ${tempColor};`;
     });
     if (resColors == "") return "";
     return `class AppColors {${resColors}\n}`;
 }
 
-function exportColor(color, fillOpacity, withTag) {
+function exportColor(color, fillOpacity, withTag, isToClass) {
+    const isGradient = color.startX != null || color.gradientType != null;
+    if (isGradient) {
+        return exportGradient(color, fillOpacity, isToClass);
+    }
     const opacity = fixDouble(fillOpacity * (color.a / 255));
     if (opacity == 0) return "Colors.transparent";
     const tag = withTag ? "color: " : "";
@@ -46,8 +44,7 @@ function exportColor(color, fillOpacity, withTag) {
     return tag + `Color(${color.toHex(true).replace("#", "0xff")})${opacity != 1 ? `.withOpacity(${opacity})` : ""}` + end;
 }
 
-function exportGradient(color, fillOpacity) {
-    //TODO: Colocar alignment caso n for exportado para Class
+function exportGradient(color, fillOpacity, isToClass) {
     let stops = [];
     let colors = [];
     for (let i = 0; i < color.colorStops.length; i++) {
@@ -57,8 +54,30 @@ function exportGradient(color, fillOpacity) {
     }
     colors = `colors: [${colors},],`;
     stops = stops.length == 2 ? "" : `stops: [${stops}],`;
-    const type = color.gradientType == "linear" ? "Linear" : "Radial";
-    return `${type}Gradient(${colors}${stops})`;
+    const type = _gradientType(color);
+    const alignment = isToClass ? "" : type == "Radial" ? _radialAlignment(color) : _linearAlignment(color);
+    return `${type}Gradient(${colors}${stops}${alignment})`;
 }
 
+function _gradientType(color) {
+    let type = color.gradientType;
+    if (color.gradientType == null) {
+        if (color.startR != null) {
+            type = "radial";
+        } else {
+            type = "linear";
+        }
+    };
+    return type == "radial" ? "Radial" : "Linear";
+}
+
+function _radialAlignment(color) {
+    return `radius: ${fixDouble(color.endR)},
+    center: Alignment(${fixDouble(color.startX)}, ${fixDouble(color.startY)}),`;
+}
+
+function _linearAlignment(color) {
+    return `begin: Alignment(${fixDouble(color.startX)}, ${fixDouble(color.startY)}),
+    end: Alignment(${fixDouble(color.endX)}, ${fixDouble(color.endY)}),`;
+}
 module.exports = { onTapGenerateColor, generateColorClass, exportColor };

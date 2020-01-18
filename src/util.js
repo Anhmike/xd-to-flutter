@@ -22,12 +22,12 @@ function fixName(value) {
 function statelessWidget(widgetName, child) {
   return `
     class ${widgetName} extends StatelessWidget {
-        const ${widgetName}({Key key}) : super(key: key);
-      
+        const ${widgetName}({Key key}) : super(key: key);      
         @override
         Widget build(BuildContext context) {
           return ${child};
         }
       }`;
 }
+
 module.exports = { sz, statelessWidget, fixName, fixDouble };
