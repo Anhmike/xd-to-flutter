@@ -1,4 +1,5 @@
 const { generateSelection } = require("./generateSelection");
+const { showMessageWithColor } = require("../showMessageWithColor");
 let clipboard = require("clipboard");
 let scenegraph = require("scenegraph");
 
@@ -7,10 +8,10 @@ function onTapGenerateWidget() {
     let result;
     if (selection.items.length != 0) {
         result = generateSelection(selection);
+        clipboard.copyText(result);
     } else {
-        //TODO: select something
+        showMessageWithColor("Select something", "grey", "messageWidget");
     }
-    clipboard.copyText(result);
 }
 
 

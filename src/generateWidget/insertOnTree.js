@@ -2,22 +2,23 @@ const { insertInside } = require("./insert/inside");
 const { insertOutside } = require("./insert/outside");
 const { insertStack } = require("./insert/stack");
 const { logTree } = require("../../log");
+const { Widget } = require("./models/widget");
 
 function insertOnTree(array, tree) {
     array.forEach(item => {
         checkRelationAndInsert(tree.widget, item, tree);
     });
-    logTree(tree, 0);
+    logTree(tree.widget, 0);
 }
 
 function checkRelationAndInsert(previous, later, tree) {
     if (previous != null) {
         const type = checkIfIsInside(previous, later);
-        if (type == "inside") insertInside(previous, later);
-        else if (type == "outside") insertOutside(previous, later);
-        else insertStack(previous, later);
+        if (type == "inside") insertInside(previous, later, tree);
+        else if (type == "outside") insertOutside(previous, later, tree);
+        else insertStack(previous, later, tree);
     } else {
-        tree.widget = later;
+        tree.widget = new Widget("rectangle", later.bounds, later.id, [], null);
     }
 }
 
@@ -45,4 +46,6 @@ function _checkOnly(widget, previous, later_final, previous_final) {
     return widget >= previous - 0.2 && later_final <= previous_final + 0.2;
 }
 
-module.exports = { insertOnTree, checkRelationAndInsert };
+exports.checkIfIsInside = checkIfIsInside;
+exports.checkRelationAndInsert = checkRelationAndInsert;
+module.exports = { insertOnTree, checkRelationAndInsert, checkIfIsInside };

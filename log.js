@@ -1,14 +1,14 @@
-function logTree(widget, dist) {
-    var spacers = "";
+function logTree(no, dist) {
+
+    var start = "";
     for (var i = 0; i < dist; i++) {
-        spacers += "|  ";
+        start += "|  ";
     }
     if (dist == 0)
         console.log("\nStructure:");
-    console.log(`${spacers}${widget.type}, id = ${widget.id}`);
-    widget.children.forEach(function (f) {
+    console.log(`${start}${no.type} - ${no.id}`);
+    no.children.forEach(function (f) {
         logTree(f, dist + 1);
     });
 }
-
 module.exports = { logTree };

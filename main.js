@@ -67,22 +67,18 @@ function generateHtml() {
     return `
     <style>.hidden {opacity: 0.0;} .center {text-align: center;display: flex;justify-content: center;}</style>
     ${widget}    
-    ${color}
-    
-    ${global}
-  
+    ${color}    
+    ${global}  
   `;
 }
 const color = `
 <h2>Color</h2>
 <form id= "ExportColor">
-    ${_row(`<input type="radio" id="fill" name="color" checked>Fill<br>`)}    
-    ${_row(`<input type="radio" id="border" name="color" >Border<br>`)}    
-    ${_row(`<input type="radio" id="shadow" name="color" >Shadow<br>`)}    
-    <div class="center">
-        <h2 id="messageColor" style="color:green;" align="center"></h2>
-    </div>
-    ${_row(`<button id="buttonColor" type="submit">Export color</button>`)}  
+    ${_row(`<input type="radio" id="fill" name="color" checked>Fill<br>`)}
+    ${_row(`<input type="radio" id="border" name="color" >Border<br>`)}
+    ${_row(`<input type="radio" id="shadow" name="color" >Shadow<br>`)}
+    ${_row(`<h2 id="messageColor" style="color:green;" align="center"></h2>`)}
+    ${_row(`<button id="buttonColor" type="submit">Export color</button>`)}
 </form>
 `;
 
@@ -92,9 +88,7 @@ const global = `
     ${_row(`<input type="radio" id="colors" name="global" checked>Colors<br>`)}    
     ${_row(`<input type="radio" id="textStyles" name="global" >Text Styles<br>`)}    
     ${_row(`<input type="radio" id="components" name="global" >Components<br>`)}    
-    <div class="center">
-        <h2 id="messageGlobal" style="color:green;" align="center"></h2>
-    </div>
+    ${_row(`<h2 id="messageGlobal" style="color:green;" align="center"></h2>`)}
     ${_row(`<button id="buttonGlobal" type="submit" uxp-variant="cta">Export global</button>`)}  
 </form>
 `;
@@ -104,9 +98,7 @@ const widget = `
 <form id= "ExportForm">
 ${_row(`<input type="radio" id="widget" name="exportGroup" checked>Widget<br>`)}
 ${_row(`<input type="checkbox" id="simpleCodeCheckbox" name="exportGroup" >with SimpleCode<br>`)}
-<div class="center">
-    <h2 id="messageWidget" style="color:green;" align="center"></h2>
-</div>
+${_row(`<h2 id="messageWidget" style="color:green;" align="center"></h2>`)}
 ${_row(`<button id="button" type="submit">Generate </button>`)}
 ${_row(`<span>To SVG Folder Group use: svg_SVGNAME</span>`)}
 ${_row(`<span font-size="6" >ex: svg_hearth</span>`)}

@@ -1,5 +1,5 @@
 class Widget {
-    constructor(father, type, bounds, id, children) {
+    constructor(type, bounds, id, children, father) {
         this.father = father;
         this.type = type;
         this.bounds = bounds;
