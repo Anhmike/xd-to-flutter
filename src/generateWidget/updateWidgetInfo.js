@@ -5,6 +5,7 @@ function updateWidgetInfo(no) {
         no.bounds.y = newInfo[1];
         no.bounds.width = newInfo[2];
         no.bounds.height = newInfo[3];
+        _sortList(no, no.type);
     }
     if (no.father != null) {
         updateWidgetInfo(no.father);
@@ -12,6 +13,27 @@ function updateWidgetInfo(no) {
     return no;
 }
 
+function _sortList(widget, type) {
+    if (type == "Column") {
+        widget.children.sort(_column);
+    } else if (type == "Row") {
+        widget.children.sort(_row);
+    }
+}
+
+function _column(a, b) {
+    if (a.bounds.y < b.bounds.y) {
+        return -1;
+    }
+    return 1;
+}
+
+function _row(a, b) {
+    if (a.bounds.x < b.bounds.x) {
+        return -1;
+    }
+    return 1;
+}
 function _newWidgetInfo(nos) {
     let x = -1, y = -1, w = -1, h = -1;
     nos.forEach(function (f) {

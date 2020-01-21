@@ -5,14 +5,12 @@ const { insertInType } = require("./insertInType");
 var checkIfIsInside = require("../insertOnTree");
 var checkRelationAndInsert = require("../insertOnTree");
 
-function insertInside(previous, later, tree) {
-
+function insertInside(previous, later) {
     if (previous.children.length == 0) {
-        previous.children.push(new Widget("rectangle", later.bounds, later.id, [], previous));
+        previous.children.push(later);
     } else {
         let inside;
         let isStack = 0;
-        console.log(`inside, id = ${later.id}`);
         for (let i = 0; i < previous.children.length; i++) {
             const child = previous.children[i];
             const vd = checkIfIsInside.checkIfIsInside(child, later);
@@ -25,20 +23,20 @@ function insertInside(previous, later, tree) {
                 }
             }
         }
+
         if (isStack > 1) {
-            insertStack(previous, later, tree);
+            insertStack(previous, later);
         } else if (inside != null && isStack < 2) {
             // It's inside something inside
-            checkRelationAndInsert.checkRelationAndInsert(inside, later, tree);
+            checkRelationAndInsert.checkRelationAndInsert(inside, later);
         } else {
             // It isn't inside something inside
             // Cost benefit to know where put
-            let cost = costBenefit(previous, later, true);
-            console.log(`bestPosition = ${cost.bestPosition}, type = ${cost.type}`);
+            let cost = costBenefit(previous, later, true, previous.type);
             let putOn = cost.bestPosition == 0
                 ? previous
                 : previous.children[cost.bestPosition - 1];
-            insertInType(putOn, later, tree, cost.type);
+            insertInType(putOn, later, cost.type);
         }
     }
 }

@@ -1,7 +1,7 @@
 const { insertInType } = require("./insertInType");
 
-function insertStack(previous, later, tree) {
-    insertInType(previous, later, tree, "Stack");
+function insertStack(previous, late) {
+    insertInType(previous, late, "Stack");
 }
 
 module.exports = { insertStack };

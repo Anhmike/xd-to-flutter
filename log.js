@@ -1,5 +1,4 @@
-function logTree(no, dist) {
-
+function logTree(no, dist) {  
     var start = "";
     for (var i = 0; i < dist; i++) {
         start += "|  ";

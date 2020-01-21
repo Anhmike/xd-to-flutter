@@ -1,4 +1,4 @@
-function costBenefit(previous, later, onlyInside) {
+function costBenefit(previous, later, onlyInside, type) {
     onlyInside = onlyInside == null ? false : onlyInside;
     let bestPosition = 0;
     let _bestCostBenefit = [];
@@ -12,6 +12,10 @@ function costBenefit(previous, later, onlyInside) {
     for (var i = bestPosition; i < previous.children.length; i++) {
         _auxCostBenefit = _costBenefit(previous.children[i], later);
         let auxCB = _auxCostBenefit[0] + _auxCostBenefit[1];
+        if (type == "Row" && _auxCostBenefit[0] == -1 || type == "Column" && _auxCostBenefit[1] == -1) {
+            return new CostBenefit(
+                i + 1, _auxCostBenefit[0] > _auxCostBenefit[1] ? "Row" : "Column");
+        }
         let bCB = _bestCostBenefit[0] + _bestCostBenefit[1];
         if ((auxCB < bCB && onlyInside) || (auxCB <= bCB && !onlyInside)) {
             onlyInside = true;
@@ -27,10 +31,10 @@ function _costBenefit(ant, widget) {
     let item = [ant, widget];
     let above = 0;
     let left = 0;
-    if (ant.y > widget.y) above = 1;
-    if (ant.x > widget.x) left = 1;
-    let distX = item[(left + 1) % 2].x - (item[left].x + item[left].w);
-    let distY = item[(above + 1) % 2].y - (item[above].y + item[above].h);
+    if (ant.bounds.y > widget.bounds.y) above = 1;
+    if (ant.bounds.x > widget.bounds.x) left = 1;
+    let distX = item[(left + 1) % 2].bounds.x - (item[left].bounds.x + item[left].bounds.width);
+    let distY = item[(above + 1) % 2].bounds.y - (item[above].bounds.y + item[above].bounds.height);
     distX = distX < 0 ? -1 : distX;
     distY = distY < 0 ? -1 : distY;
     /*if (distY < 0 && type == Column) {

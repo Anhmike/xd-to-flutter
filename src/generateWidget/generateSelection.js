@@ -6,8 +6,8 @@ function generateSelection(selection) {
     const isSymbolInstance = selection.constructor.name == "SymbolInstance";
     const items = isSymbolInstance ? selection.children : selection.items;
     let array = _xdToArray(items);
-    let tree = new Widget();
-    insertOnTree(array, tree);
+    tree.no = null;
+    insertOnTree(array, tree.no);
     return "teste";
 }
 
@@ -26,10 +26,10 @@ function _xdToArray(item) {
         } else if (name == "Group" || name == "Artboard") {
             bounds = child.globalBounds;
             if (name == "Artboard") {
-                list.push(new Widget(name, bounds, child.name));
+                list.push(new Widget(name, bounds, child.name, [], null, child));
             }
             if (child.name.includes("svg") || child.mask) {
-                list.push(new Widget("Path", bounds, child.name));
+                list.push(new Widget("Path", bounds, child.name, [], null, child));
             } else {
                 let newList = _xdToArray(child.children);
                 newList.forEach(function (item) {
@@ -37,10 +37,21 @@ function _xdToArray(item) {
                 });
             }
         } else {
-            list.push(new Widget(name, bounds, child.name));
+            list.push(new Widget(name, bounds, child.name, [], null, child));
         }
     });
     return list;
 }
 
 module.exports = { generateSelection };
+
+
+class Tree {
+    constructor() {
+        this.no;
+    }
+}
+
+let tree = new Tree();
+
+exports.tree = tree;

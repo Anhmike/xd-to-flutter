@@ -3,22 +3,26 @@ const { insertOutside } = require("./insert/outside");
 const { insertStack } = require("./insert/stack");
 const { logTree } = require("../../log");
 const { Widget } = require("./models/widget");
+var tree = require("./generateSelection");
 
-function insertOnTree(array, tree) {
+function insertOnTree(array) {
     array.forEach(item => {
-        checkRelationAndInsert(tree.widget, item, tree);
+        checkRelationAndInsert(tree.tree.no, item);
     });
-    logTree(tree.widget, 0);
+    logTree(tree.tree.no, 0);
 }
 
-function checkRelationAndInsert(previous, later, tree) {
+function checkRelationAndInsert(previous, later) {
     if (previous != null) {
         const type = checkIfIsInside(previous, later);
-        if (type == "inside") insertInside(previous, later, tree);
-        else if (type == "outside") insertOutside(previous, later, tree);
-        else insertStack(previous, later, tree);
+        if (later.id == "Retângulo 17500") {
+            console.log(`type = ${type}, pId = ${previous.id}`);
+        }
+        if (type == "inside") insertInside(previous, later);
+        else if (type == "outside") insertOutside(previous, later);
+        else insertStack(previous, later);
     } else {
-        tree.widget = new Widget("rectangle", later.bounds, later.id, [], null);
+        tree.tree.no = later;
     }
 }
 
